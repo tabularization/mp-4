@@ -6,7 +6,7 @@ import Image from "next/image";
 export default async function Home({
   searchParams,
 }: {
-  searchParams: { ticker?: string } | Promise<{ ticker?: string }>;
+  searchParams: Promise<{ ticker?: string }>;
 }) {
   const params = await Promise.resolve(searchParams);
   let stockData: StockQuote | null = null;
