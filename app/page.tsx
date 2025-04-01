@@ -1,23 +1,26 @@
+"use client";
+import { useState } from "react";
 import { StockQuote } from "@/types";
 import StockList from "../components/stock-data-display";
 import getStockData from "@/lib/getStockData";
 import Image from "next/image";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ ticker?: string }>;
-}) {
-  const params = await Promise.resolve(searchParams);
-  let stockData: StockQuote | null = null;
+export default function Home() {
+  const [ticker, setTicker] = useState("");
+  const [stockData, setStockData] = useState<StockQuote | null>(null);
+  const [display, setDisplay] = useState("");
 
-  if (params.ticker) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!ticker) return;
     try {
-      stockData = await getStockData(params.ticker.toUpperCase());
+      const res = await getStockData(ticker.toUpperCase());
+      setStockData(res);
+      setDisplay(ticker);
     } catch (error) {
       console.error("Error fetching stock data:", error);
     }
-  }
+  };
 
   return (
     <div className="relative min-h-screen flex justify-center items-start text-white flex gap-5 overflow-hidden">
@@ -32,10 +35,11 @@ export default async function Home({
             Get the latest stock quote, including the current price, price change, percent change, opening price, and
             previous close.
           </p>
-          <form method="get" action="/" className="flex gap-2 mb-4">
+          <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
             <input
               name="ticker"
               type="text"
+              onChange={(e) => setTicker(e.target.value)}
               placeholder="e.g., AAPL"
               className="flex-1 border border-gray-300 rounded px-3 py-2"
             />
@@ -47,7 +51,7 @@ export default async function Home({
       </div>
 
       {stockData ? (
-        <StockList stocks={stockData} ticker={params.ticker} />
+        <StockList stocks={stockData} ticker={display} />
       ) : (
         <Image
           src="/img4.png"

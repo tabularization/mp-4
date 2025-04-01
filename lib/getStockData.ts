@@ -1,3 +1,4 @@
+"use server"
 import { StockQuote } from "@/types"
 
 export default async function getStockData(ticker: string): Promise<StockQuote> {
