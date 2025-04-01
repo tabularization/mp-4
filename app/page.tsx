@@ -1,14 +1,14 @@
 import { StockQuote } from "@/types";
 import StockList from "../components/stock-data-display";
 import getStockData from "@/lib/getStockData";
-import Image from "next/image"
+import Image from "next/image";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: { ticker?: string } | Promise<{ ticker?: string }>;
 }) {
-  const params = await searchParams;
+  const params = await Promise.resolve(searchParams);
   let stockData: StockQuote | null = null;
 
   if (params.ticker) {
@@ -49,7 +49,13 @@ export default async function Home({
       {stockData ? (
         <StockList stocks={stockData} ticker={params.ticker} />
       ) : (
-        <Image src="/img4.png" className="rounded-lg pt-10 pb-15 px-6 animate-float" alt="3d rendering of money z-[-1]" width={600} height={500}/>
+        <Image
+          src="/img4.png"
+          className="rounded-lg pt-10 pb-15 px-6 animate-float"
+          alt="3d rendering of money z-[-1]"
+          width={600}
+          height={500}
+        />
       )}
     </div>
   );
